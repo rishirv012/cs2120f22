@@ -82,7 +82,7 @@ variable Person : Type
 variable Likes : Person, Person → Prop        -- a predicate with two Person arguments
 variable Jealous : Person, Person → Prop      -- same thing here  
 variable Triangle :       -- note definition extends to next line
-  ∀ (p1 p2 p3 : Person), Likes (p1, p2), Likes (p2, p3), Jealous(p1, p3)  
+  ∀ (p1 p2 p3 : Person), Likes (p1, p2), Likes (p2, p3) → Jealous(p1, p3) 
 variables ed hannah mel : Person
 variable likes_ed_hannah : Likes (ed, hannah)
 variable likes_hannah_mel : Likes (hannah, mel)
@@ -91,7 +91,7 @@ variable likes_hannah_mel : Likes (hannah, mel)
 -- To ANSWER, fill in the _ with your expression. 
 -- HINT "Apply" what you know.
 
-#check likes_ed_hannah 
+#check Triangle (ed, hannah, mel)
 
 
 /- #3: Proofing a propositions involving ∀ and ∨
