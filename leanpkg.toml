@@ -6,7 +6,11 @@ path = "src"
 
 [dependencies]
 <<<<<<< HEAD
+<<<<<<< HEAD
 mathlib = {git = "https://github.com/leanprover-community/mathlib", rev = "8e8c7fd56d025de86d953dc008c8d2eea35a6312"}
 =======
 mathlib = {git = "https://github.com/leanprover-community/mathlib", rev = "ebf8ff42db1e71dd0880e3f274dd5ac9303b8a2a"}
 >>>>>>> 2d40dac11dcd43e8d4f95e8d5999053c35a5908e
+=======
+mathlib = {git = "https://github.com/leanprover-community/mathlib", rev = "c8760bde60264742b5c4e51e2d721f2290d735f4"}
+>>>>>>> 8ca5c69676096953a7a05158052cfbfd61d0142d
