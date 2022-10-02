@@ -51,7 +51,13 @@ really think about what you're saying with each word in your proof.
 See how the English presents the "story" of the formal proof in more
 natural, human, terms.
 
-ANSWER HERE:
+ANSWER HERE: First we assume that Socrates is a type of object that we 
+call Person. We then define the predicate isMortal as taking in one 
+object of type person and giving us a proposition. Using isMortal, we
+write a proof, everyoneIsMortal that defines that all objects of type
+Person are mortal by checking them against the proposition isMortal. 
+Finally, we use all elimination to check Socrates by applying the
+everyoneIsMortal proof to show that Socrates is also mortal
 -/
 
 
@@ -71,22 +77,21 @@ To do so, uncomment the following block of expressions then fill
 in blanks to complete this task.
 -/
 
-/- Uncomment this block to answer the question
+-- Uncomment this block to answer the question
 variable Person : Type
-variable Likes : _        -- a predicate with two Person arguments
-variable Jealous : _      -- same thing here  
+variable Likes : Person, Person → Prop        -- a predicate with two Person arguments
+variable Jealous : Person, Person → Prop      -- same thing here  
 variable Triangle :       -- note definition extends to next line
-  ∀ (p1 p2 p3 : Person), _  
-variables ed hannah mel : _
-variable likes_ed_hannah : _
-variable likes_hannah_mel : _
+  ∀ (p1 p2 p3 : Person), Likes (p1, p2), Likes (p2, p3), Jealous(p1, p3)  
+variables ed hannah mel : Person
+variable likes_ed_hannah : Likes (ed, hannah)
+variable likes_hannah_mel : Likes (hannah, mel)
 -- Finally write and use #check to check an expression that proves that ed is 
 -- jealous of mel.
 -- To ANSWER, fill in the _ with your expression. 
 -- HINT "Apply" what you know.
--/
 
-#check _
+#check likes_ed_hannah 
 
 
 /- #3: Proofing a propositions involving ∀ and ∨
