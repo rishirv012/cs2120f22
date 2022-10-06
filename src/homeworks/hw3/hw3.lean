@@ -79,10 +79,10 @@ in blanks to complete this task.
 
 -- Uncomment this block to answer the question
 variable Person : Type
-variable Likes : Person, Person → Prop        -- a predicate with two Person arguments
-variable Jealous : Person, Person → Prop      -- same thing here  
+variable Likes : Person → Person → Prop        -- a predicate with two Person arguments
+variable Jealous : Person → Person → Prop      -- same thing here  
 variable Triangle :       -- note definition extends to next line
-  ∀ (p1 p2 p3 : Person), Likes (p1, p2), Likes (p2, p3) → Jealous(p1, p3) 
+  ∀ (p1 p2 p3 : Person), Likes p1 p2, Likes p2 p3, Jealous p1 p3
 variables ed hannah mel : Person
 variable likes_ed_hannah : Likes (ed, hannah)
 variable likes_hannah_mel : Likes (hannah, mel)
@@ -91,7 +91,7 @@ variable likes_hannah_mel : Likes (hannah, mel)
 -- To ANSWER, fill in the _ with your expression. 
 -- HINT "Apply" what you know.
 
-#check Triangle (ed, hannah, mel)
+#check Triangle ed hannah mel → likes_ed_hannah, likes_hannah_mel → Jealous ed mel
 
 
 /- #3: Proofing a propositions involving ∀ and ∨
@@ -102,6 +102,10 @@ the methods of inference we've covered: ∀ (P Q : Prop), P ∧ Q → Q ∨ P.
 Do read that proposition carefully, please. You don't need to write a
 long proof. Keep it concise. Identiy the inference rules you use.
 
+For all propositions P and Q, Given P ∧ Q, we can say by and elimination that P and Q are both true. We also know that by or
+introduction(right if you use Y and left if you use X) that if you can prove one of the two variables, you can prove the or statement. 
+So what we can do is first use and elimination to show that P is true. We can then use the proof of P to write a proof of Q ∨ P using
+or introduction which states that given P, P ∨ Q must be true. 
 -/
 
 
@@ -120,4 +124,8 @@ lines, using line breaks and indentation to make the answer readable.
 variable Person : Type
 variable Knows : Person → Person → Prop
 def answer : Prop := 
-    _
+    ∀ (P S : Person), (∃(Q R: Person))
+    Knows P Q 
+    Knows Q R 
+    Knows R S 
+
