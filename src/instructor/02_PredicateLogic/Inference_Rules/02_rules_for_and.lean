@@ -12,4 +12,10 @@ quantify over propositions. You cannot write these definitions
 in first-order logic because it doesn't allow you to do this.
 Such an expression is a syntax error in first-order logic. 
 -/
+theorem and_intro_true : and_introduction :=
+begin
+unfold and_introduction,
+assume X Y,
+exact and.intro,
 
+end
