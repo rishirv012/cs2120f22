@@ -154,6 +154,22 @@ different values or combinations of argument values.
 
 def my_bool_and : bool → bool → bool 
 | tt tt := tt
+| ff ff := ff
+| tt ff := ff
+| ff tt := ff
+
+
+def my_bool_and2 : bool → bool → bool 
+| tt tt := tt
+| _ _ := ff
+
+def my_bool_or : bool → bool → bool 
+| ff ff := ff
+| _ _ := tt
+
+def my_bool_not : bool → bool 
+| ff := tt
+| tt := ff
 
 /-
 Functions in Lean must be "total," which means that
@@ -168,7 +184,10 @@ function!
 #eval my_bool_and ff tt
 #eval my_bool_and ff ff
 
-
+example : my_bool_and tt tt = tt := rfl
+example : my_bool_and tt ff = ff := rfl
+example : my_bool_and ff tt = ff := rfl
+example : my_bool_and ff ff = ff := rfl
 /-
 You should (almost must) use this "by cases" syntax
 to define functions recursive functions. If you use
@@ -187,6 +206,18 @@ def factorial : ℕ → ℕ           -- remember, no := here
 
 #eval factorial 5
 
+
+example : ∃(n : ℕ), isEven n :=
+  exists.intro 8 rfl
+
+
+example: (∃ (n : ℕ), isEven n) → true := 
+begin
+assume h,
+cases h with w pf,
+end
+
+
 -- ∃
 def exists_intro := ∀ {P : X → Prop} (w : X), P w → (∃ (x : X), P x) 
 def exists_elim := ∀ {P : X → Prop}, (∃ (x : X), P x) → (∀ (x : X), P x → Y) → Y 
@@ -202,4 +233,3 @@ as axioms. The truth of any other proposition in predicate logic
 (the foundation for most of mathematics) is proved by applying 
 fundamental axioms and previously proved theorems..  
 -/
-
