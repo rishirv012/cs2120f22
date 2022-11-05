@@ -13,7 +13,10 @@ at the end. Points for each part are indicated.
 
 Is it true in predicate logic that  
 (false → true) ∧ (false → false)?
-Answer:
+Answer: Yes, this is true because when you start with false, any statement can be true,
+so false implies true is true since false can imply anything and false implies false is 
+also true meaning this ∧ is checking true ∧ true. The predicate logic rule for this would 
+be false elimination if it was written in formal logic.
 
 
 -/
@@ -28,6 +31,12 @@ in English that there is no such proof.
 
 example : (false → true) ∧ (true → true) :=
 begin
+apply and.intro,
+assume f,
+apply false.elim,
+exact f,
+assume t,
+exact t,
 end
 
 
@@ -42,8 +51,12 @@ to show that what remains to be proved is valid.
 
 
 Answer:
-
-
+To start, you need to split the and apart using and.intro which will turn the proposition
+into false → true and true → true. Then, to prove false → true, you can just apply false
+elimination which shows that with a proof of false anything else is true. There is no 
+formal proof needed for the second part since it is just saying that true implies itself
+which can be shown by assuming the first true and seeing that the result is the same as
+the assumption
 -/
 
 
@@ -76,9 +89,9 @@ inference rules makes sense: not a rigorous proof,
 just an explanation of why Q has to be true under
 the conditions give by the assumptions/premises.
 
-Answer: 
-
-
+Answer: The rule states that P is true, and that out of ¬P and Q, at least one must be true, 
+Since it is telling us that P is true, that must mean that ¬P is false and therefore Q has 
+to be true to satisfy the ∨ 
 -/
 
 
@@ -94,10 +107,15 @@ proposition is valid.
 P   Q   (¬P ∨ Q)    (¬P ∨ Q) ∧ P    ((¬P ∨ Q) ∧ P) → Q
 ------------------------------------------------------
 f   f   t           f               t
+f   t   t           f               t
+t   f   f           f               t
+t   t   t           t               t
 
 
 Statement: 
-
+The truth table shows that the proposition of (¬P ∨ Q) ∧ P will always imply Q no matter
+what the values of P and Q are so the overall proposition of ((¬P ∨ Q) ∧ P) → Q is always
+true, proving the validity of the proposition
 -/  
 
 
@@ -116,6 +134,20 @@ is true in either case.
 
 example : ∀ (P Q : Prop), (¬P ∨ Q) ∧ P → Q :=
 begin
+assume P Q,
+assume h,
+apply or.elim (classical.em P),
+assume p,
+cases h with npq p,
+
+apply or.elim npq,
+assume np,
+contradiction,
+assume q,
+exact q,
+assume np,
+cases h with pq p,
+contradiction,
 end
 
 
@@ -124,7 +156,10 @@ D. [10 points] Give an informal (English) proof
 that the inference rule is valid in predicate logic. 
 Name each inference rule you use in your reasoning.
 
-Answer:
+Answer: Use the law of excluded middle ot create two cases for the proposition then use
+case analysis to seperate the cases. Use the or elimination rule to create a contradiction
+for the case where P implies Q and use case analysis to create another contradiction for the 
+case where not P implies Q.
 -/
 
 
@@ -140,7 +175,7 @@ is true.  Hint: put parentheses around your ↔ expression.
 
 -- Don't try to write a proof here; just the proposition
 def if_p_iff_q_then_if_also_p_then_q : Prop :=
-    _
+    ∀ (P Q : Prop), (P ↔ Q) ∧ P → Q
 
 
 /-
@@ -150,13 +185,6 @@ each inference you you use in your reasoning, *or* give
 a formal proof of it using Lean. You do not have to give
 both. 
 -/
-
-
-/- Option #1: Informal proof:
-
--/
-
-
 /-
 Option #2: Formal proof. Reminders: the iff elim
 rules are called iff.mp and iff.mpr in Lean; or you
@@ -166,6 +194,12 @@ to a proof of a bi-implication automatically.
 
 example : if_p_iff_q_then_if_also_p_then_q :=
 begin
+unfold if_p_iff_q_then_if_also_p_then_q,
+assume P Q,
+assume h,
+cases h with bi p,
+apply iff.mp bi,
+exact p,
 end
 
 
@@ -181,7 +215,9 @@ A. [10 points] Suppose P is any proposition. In plain
 English give a step by step explanation of how you would 
 go about proving ¬P using proof *by negation*. 
 
-Answer:
+Answer: In order to prove ¬P by negation, you need to show that P implies false. You do this
+by assuming P from ¬P leaving the theorem as P → false from which you can usually get 
+some sort of contradiction since you cannot create proofs of false. 
 
 
 -/
@@ -196,7 +232,10 @@ Explain what classical rule of inference you need to
 use to finish off such a proof. 
 
 Answer: 
-
+To do a proof by contradiction you start by assuming the opposite of what you want to prove,
+so in this case you can start by assuming P as false. You then show how this will lead to
+a contradiction which would mean that P has to be true to satisfy the condition. You need
+the law of excluded middle to create cases which you can then solve into contradiction
 
 -/
 
@@ -210,12 +249,14 @@ it's not sunny, it's hot.
 
 A. Is it hot in classical logic? 
 
-Answer: 
+Answer: Yes because this states that it will always be hot whether or not it is funny. 
 
 
 B. Is it hot "constructively?" Briefly explain your answer. 
     
-Answer: 
+Answer: In constructive logic you can derive a proof of y from a proof of x but since
+we don't know whether its sunny or not sunny, we cant derive a proof that its hot because
+the statments creates a logical fallacy. 
 
 
 C. Give a formal proof of your answer to the classical question. 
@@ -227,5 +268,9 @@ and "it's hot," where S stands for "it's sunny" and H stands for
 -- it's hot
 example : ∀ (S H : Prop), (S → H) → (¬S → H) → H :=
 begin
+assume S H,
+assume sh nsh,
+
+
 end
 

@@ -12,10 +12,8 @@ too. Replace the placeholder (_) with your
 answer.
 -/
 
-def and_associative : Prop := ∀ (P Q R), P ∧ Q ∧ R ↔ (P ∧ Q) ∧ R
-
--- and is right associative
-
+def and_associative : Prop :=
+  ∀(P Q R: Prop), (P ∧ Q) ∧ R  ↔ P ∧ (Q ∧ R) 
 
 
 
@@ -27,61 +25,96 @@ that you use in your reasoning.
 -/
 
 /-
-Answer: 
+Answer: Given the bi-implication, we can split it into two seperate implications using
+iff.intro, we then need to prove each of the two cases. We start by breaking apart the 
+first case using case analysis as well as and elimination on the left and right. This
+will ultimately give us P Q and R as individual propositions but I believe it would 
+still be unsolveable as the result we're trying to prove would be a multi proposition
+statement. So, we could need to apply and introduction twice to break apart the result of
+P ∧ Q ∧ R into P Q R. After this we just use the exact function to eliminate the three
+cases of P Q and R. Like I said at the beginning, using iff.intro creates two major cases 
+so we would just repeat this entire process again to deal with the second case. 
 -/
 
 /- #1C [5 points]
-
-Give a formal proof of the proposition.
-Hint: unfold and_associative to start.
 -/
 
 theorem and_assoc_true : and_associative :=
 begin
-unfold and_associative,     -- expand definition of and_associative
-assume P Q R,               -- ∀ intro
-apply iff.intro _ _,        -- iff intro 
-
--- forward
-assume pqr,                 -- assume premise 
-cases pqr with p qr,        -- "unbox" proofs of P and of Q ∧ R
-cases qr with q r,          -- "unbox" proofs of Q and R
-let pq := (and.intro p q),  -- "rebox" proofs of P and of Q to prove P ∧ Q
-apply (and.intro pq r),     -- "box" that up with a proof of r
--- that complete the proof in the forward direction
-
--- reverse 
-
-
+unfold and_associative,
+assume P Q R,
+apply iff.intro,
+assume h,
+cases h,
+let p := and.elim_left h_left,
+let q := and.elim_right h_left,
+apply and.intro,
+exact p,
+apply and.intro,
+exact q,
+exact h_right,
+assume h,
+cases h,
+let q := and.elim_left h_right,
+let r := and.elim_right h_right,
+apply and.intro,
+apply and.intro,
+exact h_left,
+exact q,
+exact r,
 end
 
-
-
 /- #2A [10 points]
-
 Write the proposition that ∨ is associative.,
 analogous to the proposition about ∧ in #1.
 -/
-
 def or_associative : Prop := 
-  _
-
-
+  ∀(P Q R: Prop), (P ∨ Q) ∨ R  ↔ P ∨ (Q ∨ R) 
 /- #2B [10 points]
-
 Write an English language proof of it, citing
 the specific inference rules you use in your
 reasoning.
+I start by unfolding or_associative and then assuming P Q R as propositions to use later,
+then I will apply iff.intro to split the bi-implication into two normal implications. 
+After that I can start working on the first of the two cases this creates. To start I 
+assume h and create two cases with it, the first of them being P ∨ Q and the second being 
+R. With these two subcases I can apply or intros to break them down into P and Q individually
+and then just use exact to satisfy the goal. That takes care of the first case created
+from splitting the bi-implication. To satisfy the second one, I repeat the same process over 
+again.
 -/
 
-
 /- #2C [5 points]
-
 Complete the following formal proof.
 -/
 
 theorem or_associative_true : or_associative :=
 begin
+unfold or_associative, 
+assume P Q R,  
+apply iff.intro,
+assume h,
+cases h with pq r,
+cases pq,
+apply or.intro_left,
+exact pq,
+apply or.intro_right,
+apply or.intro_left,
+exact pq,
+apply or.intro_right,
+apply or.intro_right,
+exact r,
+assume h,
+cases h with p rq,
+apply or.intro_left,
+apply or.intro_left,
+exact p,
+cases rq with q r,
+apply or.intro_left,
+apply or.intro_right,
+exact q,
+apply or.intro_right,
+exact r,
 end
 
 
@@ -90,63 +123,8 @@ Write a formal statement of the proposition.
 -/
 
 def arrow_transitive : Prop :=
-  _
+  ∀(X Y Z: Prop), (X → Y) → (Y → Z) →(X → Z)  
 
-
-/-
-If there smoke there's fire
-If there's fire there's light
-If there's light, everything's good
-And there's smoke. So everything's good.
-Right?
--/
-
--- The basic propositions
-variables (Smoke Fire Light Good : Prop)
--- The implications
-variables (sf : Smoke → Fire) (fl : Fire → Light) (lg : Light → Good)
--- The premise
-variable (s : Smoke)
-
-example : ∀ (S F L G : Prop), (S → F) → (F → L) → (L → G) → S → G:=
-begin
-assume S F L G,   -- assume the basic propositions
-assume sf fl lg,  -- assume the implication hypotheses
-assume s,         -- assume there's smoke, now show everything good
-
-/- this works
-apply lg,
-apply fl,
-apply sf,
-exact s
--/
-
--- so does this
-exact lg (fl (sf s)),
--- make sure you understand it both ways
--- understand arrow elimination
--- arrow elimination is like function application!
-end
-
-
-/-
-Eercise with negation
--/
-
-example :0 ≠ 1 :=
-begin
-assume p,
-cases p,
-end 
-
-
-example : ∀ P, ¬(P ∧ ¬P) :=
-begin
-assume P,
-assume pandnp,
-cases pandnp with p np,
-apply false.elim (np p),
-end
 
 /- #3B [10 points]
 
@@ -159,18 +137,40 @@ have a proof of X, you can derive a proof of Y by
 arrow elimination. Think of it as applying a proof
 of an implication to a proof of its premise to get
 yourself a proof of its conclusion.
+
+I can start by unfolding the arrow transitive proposition and then assuming X Y and Z as 
+propositions. I can then assume xy, yz, and x, which will give me proofs that X → Y, 
+Y → Z, and a proof of X. With the proof of X → Y and the proof of X, I can derive a proof
+of Y using arrow elimination with a let function. In the same manner, I can derive a proof
+of Z by using arrow elimination on the proof of Y → Z and the proof of Y. Once I have a proof
+of Z, the goal will be met. 
+
 -/
 
 
 /- #3C [5 points]. 
 Write a formal proof of it.
 -/
+theorem arrow_transitive_true : arrow_transitive :=
+begin
+unfold arrow_transitive,
+assume X Y Z, 
+assume xy,
+assume yz,
+assume x,
+let y := (xy x),
+let z := (yz y),
+exact z,
+
+end
 
 
 /- #4
 Suppose that if it's raining then the streets
 are wet. This problem requires you to prove that
 if the streets are not wet then it's not raining.
+
+if raining then wet
 -/
 
 /- #4A [10 points]
@@ -181,7 +181,7 @@ logic by completing the following answer.
 
 def contrapositive : Prop :=
   ∀ (Raining Wet : Prop), 
-    (Raining → Wet) → (¬Raining → ¬Wet)
+    (Raining → Wet) → (¬Wet → ¬Raining)
 
 
 /- #4B [10 points]. 
@@ -189,12 +189,28 @@ def contrapositive : Prop :=
 
 theorem contrapositive_valid : contrapositive :=
 begin
+unfold contrapositive, 
+assume r w, 
+assume rw,
+assume nw,
+assume r,
+let w := (rw r),
+contradiction,
+
+end
 
 /- #4C [5 points]. 
 
 Give an English language proof of it.
+I start by unfolding the contrapositive and then breaking it into pieces. I can assume r
+and w to get my starting propositions. Then I can get a proof of r → w by doing another 
+assume that takes a first part of the contrapositive as well as a proof of ¬w with 
+another assume that takes the next part of the contrapositive. I'm left with ¬r as my 
+result which I can seperate into a proof of r and a false left in my result. Then I just
+use arrow elimination to create a proof of W using r → w and the proof of r I have. This
+leaves me with a proof of w AND ¬w which is impossible so I can finish the theorem with 
+a contradiction. 
 -/
-
 
 /- #5. Extra credit.
 
@@ -214,7 +230,7 @@ begin
 assume em X Y nxory,
 cases (em X) with x nx,
 let foo := or.intro_left Y x,
-_
+
 end
 
 /-
