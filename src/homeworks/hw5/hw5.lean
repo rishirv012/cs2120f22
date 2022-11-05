@@ -24,7 +24,8 @@ State and prove the proposition that there's some
 natural number whose square is 144.
 -/
 
-example : _ := _
+example : ∃ (n : ℕ), n*n = 144 := 
+  exists.intro 12 rfl
 
 
 /- #1B.
@@ -35,7 +36,8 @@ for string.append, the function for gluing two
 strings together into one.
 -/
 
-example : _ := _
+example : ∃ (s : string), s ++ "!" = "I love logic!" := 
+  exists.intro "I love logic" rfl
 
 /- #1C.
 
@@ -46,8 +48,12 @@ takes just one witness as a time, so you will
 have to apply it more than once.
 -/
 
-example : _ :=
+example : ∃ (x y z : ℕ), x*x + y*y = z*z :=
 begin
+apply exists.intro 3,
+apply exists.intro 4,
+apply exists.intro 5,
+apply rfl,
 end
 
 /- #1D
@@ -56,7 +62,7 @@ three natural number arguments, x, y, and z,
 yielding the proposition that x*x + y*y = z*z.
 -/
 
-def pythag_triple (x y z : ℕ) := _
+def pythag_triple (x y z : ℕ) := x*x + y*y = z*z
 
 /- #1E
 State the propositionthat there exist x, y, z, 
@@ -64,9 +70,13 @@ natural numbers, that satisfy the pythag_triple,
 predicate, then prove it. (Use "example : ...")
 -/
 
-example : _  :=
+example : ∃ (x y z : ℕ), pythag_triple x y z :=
 begin
-_
+unfold pythag_triple,
+apply exists.intro 3,
+apply exists.intro 4,
+apply exists.intro 5,
+apply rfl,
 end
 
 /- #2A
@@ -79,7 +89,7 @@ n to be a multiple of m? There has to be some
 other number involved, right?
 -/
 
-def multiple_of (n m : ℕ) := ∃ (k), n = m * k  
+def multiple_of (n m : ℕ) := ∃ (k), n = m * k
 
 /- #2B
 
@@ -139,7 +149,7 @@ example (n m k : ℕ) : n + (m + k) = (n + k) + m :=
 begin 
 ring 
 end  
--- Enlish proof (it's short!): 
+-- Enlish proof (it's short!)
 
 /-
 Whoa! It's so easy to prove addition associative? 
@@ -185,9 +195,17 @@ has to be. Also, be sure to use multiple_of in
 formally stating the proposition to be proved.
 -/
 
-example : _ :=
+example : ∀ (N : ℕ), multiple_of N 6 → multiple_of N 3 :=
 begin
-_
+assume n,
+assume h,
+unfold multiple_of at h,
+unfold multiple_of,
+cases h,
+apply exists.intro (2*h_w),
+ring,
+exact h_h,
+
 end 
 
 
@@ -211,14 +229,27 @@ that you can replace equals by equals without
 changing the truth values of propositions. 
 -/
 
-example (n h k : ℕ) : _ :=
+example (n h k : ℕ) : multiple_of n h ∧ multiple_of h k → multiple_of n k :=
 begin
-_
+unfold multiple_of,
+assume h,
+cases h,
+cases h_left with x,
+cases h_right with y,
+rw h_left_h,
+rw h_right_h,
+apply exists.intro (x*y),
+ring,
 end
 
 
 
 /- *** exists.elimination *** -/
+
+variable U : Type
+variable P : U → Prop
+variable Q : Prop
+
 
 /- #3A
 
@@ -229,6 +260,7 @@ everything you need to formally state this
 conclusion (first hole/underscore). All 
 you then have to do is to fill in is the
 proof (second _).
+
 -/
 
 example 
@@ -237,9 +269,15 @@ example
   (isCool : Person → Prop)
   (LogicMakesCool : ∀ (p), KnowsLogic p → isCool p)
   (SomeoneKnowsLogic : ∃ (p), KnowsLogic p) :
-  _ :=
+  (∃ (p), isCool p)
+   :=
 begin
-_
+apply exists.elim SomeoneKnowsLogic,
+assume p,
+assume k,
+apply exists.intro p,
+apply LogicMakesCool p,
+exact k,
 end
 
 
@@ -252,10 +290,15 @@ someone is not happy then not everyone is happy.
 example 
   (Person : Type)
   (Happy : Person → Prop) :
-  _
+  (∃ (p : Person), ¬Happy p) → ¬(∀ (P : Person), Happy P)
   :=
 begin
-  _
+  assume e a,
+  apply exists.elim e,
+  assume p,
+  assume nh,
+  let h :=(a p),
+  contradiction,
 end
 
 /- #3C
@@ -276,10 +319,27 @@ clear that there's a contradiction in
 your set of assumptions. 
 -/
 example 
-  (α : Type)
-  (P : α → Prop) :
-  _ :=
+  (Person : Type)
+  (Happy : Person → Prop) :
+  (∀ (p : Person), Happy p) ↔ ¬(∃ (p : Person), ¬Happy p) :=
 begin
+apply iff.intro,
+assume a,
+assume e,
+cases e with p nh,
+let h :=(a p),
+contradiction,
+
+assume e,
+assume p,
+let h :=(Happy p),
+cases (classical.em h) with h nh,
+apply classical.by_contradiction,
+assume nh,
+contradiction,
+
+
+
 end 
 
 
