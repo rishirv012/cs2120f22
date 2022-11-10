@@ -319,26 +319,29 @@ clear that there's a contradiction in
 your set of assumptions. 
 -/
 example 
-  (Person : Type)
-  (Happy : Person → Prop) :
-  (∀ (p : Person), Happy p) ↔ ¬(∃ (p : Person), ¬Happy p) :=
+  (α : Type)
+  (P : α → Prop) :
+  (∀ (p : α), P p) ↔ (¬∃ (p : α), ¬P p) :=
 begin
 apply iff.intro,
 assume a,
 assume e,
-cases e with p nh,
+apply exists.elim e,
+assume p,
+assume nh,
 let h :=(a p),
 contradiction,
 
 assume e,
 assume p,
-let h :=(Happy p),
+let h :=(P p),
 cases (classical.em h) with h nh,
+exact h,
 apply classical.by_contradiction,
 assume nh,
-contradiction,
-
-
+apply not.elim e,
+apply exists.intro p,
+exact nh,
 
 end 
 
@@ -357,13 +360,20 @@ taking objects of that type.
 example 
   (T : Type)
   (P : T → Prop) :
-  _ :=
+  ¬(∃ (t : T), P t) → (∀ (t: T), ¬P t) :=
 begin
-_
+assume ne,
+assume a,
+assume pa,
+apply not.elim ne,
+apply exists.intro a,
+exact pa,
+
+
 end
 
 
-/- #3D
+/- #3E
 Formally state and prove the proposition
 that if there's an object with the property 
 of having property P or property Q then 
@@ -375,7 +385,12 @@ example
   (α : Type)
   (P : α → Prop)
   (Q : α → Prop): 
-  _ :=
+  (∃ (a : α), P a ∨ Q a) → (∃ (a : α), P a) ∨ (∃ (a : α), Q a) :=
 begin
+assume e,
+apply exists.elim e,
+assume a,
+assume porq,
+
 end
 
