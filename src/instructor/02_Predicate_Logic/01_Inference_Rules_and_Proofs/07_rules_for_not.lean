@@ -243,7 +243,7 @@ cases em_P with p np,
 exact p,
 -- "assumption" also works heew
 -- case ¬P
-apply false.elim (nnp np)
+apply false.elim (nnp np),
 -- "contradiction" also works here
 end
 
